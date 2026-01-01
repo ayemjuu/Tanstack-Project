@@ -21,6 +21,7 @@
 // };
 
 import { api } from '@/utils/api';
+
 export interface Post {
   id: number;
   userId: number;
@@ -28,22 +29,7 @@ export interface Post {
   body: string;
 }
 
-export interface PaginatedPosts {
-  data: Post[];
-  page: number;
-  totalPages: number;
-}
-
-export const getPostPaginated = async ({
-  page,
-  size,
-}: {
-  page: number;
-  size: number;
-}): Promise<PaginatedPosts> => {
-  const { data } = await api.get<PaginatedPosts>(
-    `/posts?page=${page}&size=${size}`,
-  );
-
+export const getPosts = async (): Promise<Post[]> => {
+  const { data } = await api.get<Post[]>('/posts');
   return data;
 };
