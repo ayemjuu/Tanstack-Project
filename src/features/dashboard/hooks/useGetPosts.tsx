@@ -23,21 +23,12 @@
 // };
 
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
-import { getPostPaginated, type PaginatedPosts } from '../api';
+import { getPosts, type Post } from '../api';
 
-interface PostQueryParams {
-  page: number;
-  size: number;
-}
-
-export const useGetPostPaginated = (
-  params: PostQueryParams,
-  options?: UseQueryOptions<PaginatedPosts, Error>,
-) => {
-  return useQuery<PaginatedPosts, Error>({
-    queryKey: ['posts', params.page, params.size],
-    queryFn: () => getPostPaginated(params),
-    placeholderData: (previous) => previous,
+export const useGetPosts = (options?: UseQueryOptions<Post[], Error>) => {
+  return useQuery<Post[], Error>({
+    queryKey: ['posts'],
+    queryFn: getPosts,
     ...options,
   });
 };
