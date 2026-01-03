@@ -1,58 +1,141 @@
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { useSearchParams } from 'react-router-dom';
-import { useGetPostById } from '../hooks/useGetPostsById';
-import { DataTable } from '@/components/ui/dataTable';
+//BASiC FORM
+
+import { useForm } from 'react-hook-form';
+import FormSecond from './FormSecond';
+
+type UserForm = {
+  email: string;
+  name: string;
+  phoneNumber: string;
+  isActive: boolean;
+};
 
 export default function SuppliesPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const idParam = searchParams.get('id');
-  const id = idParam ? Number(idParam) : null;
-  const isOpen = Boolean(id);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isValid, isDirty },
+  } = useForm<UserForm>({
+    mode: 'onSubmit',
+    //pede din onChange
+    //meaning validation happens upon submit, upon changing texts and so on
+    defaultValues: { email: '', name: '', phoneNumber: '', isActive: true },
+  });
 
-  const { data, isLoading, isError } = useGetPostById(id);
+  const onSubmit = (data: UserForm) => {
+    console.log('data', data);
+    //API calls here
+    reset();
+  };
+
+  console.log('isDirty', isDirty);
+
+  //Good for button disaled style
+  console.log('isValid', isValid);
+
+  //watch certain text input
+  //good for conditional rendering or some
+  const watchEmail = watch('email');
+  console.log(watchEmail);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Supplies</h1>
-
-      <Button onClick={() => setSearchParams({ id: '2' })}>
-        Open Supply #2
-      </Button>
-
-      <Dialog
-        open={isOpen}
-        onOpenChange={(open) => {
-          if (!open) setSearchParams({});
-        }}
-      >
-        {/* Modal */}
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Supplies Modal</DialogTitle>
-          </DialogHeader>
-          {isLoading && <p>Loading...</p>}
-          {isError && <p>Failed to load post</p>}
-
-          {data && (
-            <DataTable
-              data={[data]}
-              columns={[
-                { header: 'ID', accessor: 'id' },
-                { header: 'User ID', accessor: 'userId' },
-                { header: 'Title', accessor: 'title' },
-                { header: 'Body', accessor: 'body' },
-              ]}
+    <div className="flex gap-x-6">
+      <div className="max-w-md space-y-6 rounded-xl border bg-white p-6 shadow-sm">
+        <h1 className="text-xl font-semibold text-gray-800">Supplies</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Email */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              {...register('email', {
+                required: 'Email is Requried',
+              })}
+              className={`w-full rounded-md border px-3 py-2 text-sm outline-none
+              ${
+                errors.email
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+              }
+            `}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+            {errors.email && (
+              <span className="text-xs text-red-500">
+                {errors.email.message}
+              </span>
+            )}
+          </div>
+
+          {/* Name */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              {...register('name', {
+                required: 'Name is Requried',
+              })}
+              className={`w-full rounded-md border px-3 py-2 text-sm outline-none
+              ${
+                errors.name
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+              }
+            `}
+            />
+            {errors.name && (
+              <span className="text-xs text-red-500">
+                {errors.name.message}
+              </span>
+            )}
+          </div>
+
+          {/* Phone Number */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              {...register('phoneNumber', {
+                required: 'Phone Number is Requried',
+              })}
+              className={`w-full rounded-md border px-3 py-2 text-sm outline-none
+              ${
+                errors.phoneNumber
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+              }
+            `}
+            />
+            {errors.phoneNumber && (
+              <span className="text-xs text-red-500">
+                {errors.phoneNumber.message}
+              </span>
+            )}
+          </div>
+
+          {/* Is Active */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              {...register('isActive')}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label className="text-sm text-gray-700">Is Active</label>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full rounded-md bg-blue-600 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+      <FormSecond />
     </div>
   );
 }
