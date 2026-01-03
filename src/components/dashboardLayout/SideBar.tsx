@@ -4,6 +4,7 @@ const navItems = [
   { label: 'Dashboard', to: '/dashboard' },
   { label: 'Transactions', to: '/dashboard/transactions' },
   { label: 'Supplies', to: '/dashboard/supplies' },
+  { label: 'Forms', to: '/dashboard/forms' },
 ];
 
 export function Sidebar() {
